@@ -38,14 +38,19 @@ public:
 	std::vector<Mesh> vertices;
 	std::vector<Texture> normals;
 	std::vector<Mesh> meshes;
+	std::vector<float> verticesLLD; //lab like drow
+	std::vector<float> normalsLLD;
+	std::vector<float> colorLLD;
+	std::vector<float> texCordsLLD;
 	int vertexCount;
 	
 	ModelCtrl(float=0, float=0, float=0);
 	void loadModel(const std::string& path);
 	void processNode(aiNode*,const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
+	void setupForLLD(float=1, float=0, float=0, float=1);
 	void Draw();
-
+	void drawLLD();
 	
 	//void conversion();
 

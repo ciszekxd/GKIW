@@ -13,6 +13,7 @@ void ModelCtrl::loadModel(const std::string &path){
         aiProcess_JoinIdenticalVertices |
         aiProcess_SortByPType);
     processNode(scene->mRootNode, scene);
+    setupForLLD(1.0f,0.0f,0.0f,1.0f);
 }
 void ModelCtrl::processNode(aiNode* node, const aiScene* scene)
 {
@@ -110,10 +111,72 @@ Mesh ModelCtrl::processMesh(aiMesh* mesh, const aiScene* scene)
     //textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
+    std::cout << "mesh set" << std::endl;
     return Mesh(vertices, indices, textures);
 }
 
+void ModelCtrl::setupForLLD(float colR, float colG, float colB, float colAlpha) {
+    //z wektora siatek iterujemy po kolejnych siatkach
+    for  (int i = 0;  i < this->meshes.size(); i++){
+        Mesh temp = this->meshes[i];
+        //dla ka¿dej siatki iterujemy po wszystkich wierzcho³kach wchodz¹cych w jej sk³ad
+        for (int k = 0; k < temp.vertices.size(); k++){
+            //przepisujemy koordynaty z ka¿dego wierzcho³ka
+            for (int j = 0; j < 3; j++)
+            {
+               this->verticesLLD.push_back(temp.vertices[k].Position[j]);
+               this->normalsLLD.push_back(temp.vertices[k].Normal[j]);
+            }
+            this->verticesLLD.push_back(1.0f);
+            this->normalsLLD.push_back(0.0f);
+            //przepisujemy koordynaty tekstur
+            for (int j = 0; j < 2; j++) {
+                this->texCordsLLD.push_back(temp.vertices[k].TexCoords[j]);
+            }
+        }
+    }
+    this->vertexCount = verticesLLD.size() / 4;
+    for (int i = 0; i < vertexCount; i++) {
+        this->colorLLD.push_back(colR);
+        this->colorLLD.push_back(colG);
+        this->colorLLD.push_back(colB);
+        this->colorLLD.push_back(colAlpha);
+    }
+    std::cout << "reload done" << std::endl;
+}
 
+void ModelCtrl::drawLLD() {
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    std::cout << "1"<< std::endl;
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, &this->verticesLLD[0]);
+
+    std::cout << "2" << std::endl;
+
+    //if (!smooth) glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normals);
+    glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, &this->normalsLLD[0]);
+
+    std::cout << "3" << std::endl;
+
+    glVertexAttribPointer(2, 4, GL_FLOAT, false, 0, &this->texCordsLLD[0]);
+
+    std::cout << "4" << std::endl;
+
+    glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, &this->colorLLD[0]);
+
+    std::cout << "5" << std::endl;
+
+    
+    glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(3);
+}
 
 
 

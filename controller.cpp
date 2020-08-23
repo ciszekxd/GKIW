@@ -12,7 +12,7 @@ void Controller::initAll(){
 	glEnable(GL_DEPTH_TEST);
 //	initShaders();
 //	spLambert->use();
-	std::cout << "hello world";
+	std::cout << "hello world" << std::endl;
 }
 
 void Controller::endAll() {

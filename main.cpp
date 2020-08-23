@@ -48,9 +48,10 @@ int main(){
 	ModelCtrl skeleton(0.0, 0.0, 0.0);
 	skeleton.loadModel(szkielet);
 	
+	//
 	while (!glfwWindowShouldClose(libcontroll.getWindow())) {
 		drowIT.clear();
-		skeleton.Draw();
+		skeleton.drawLLD();
 		glfwSwapBuffers(libcontroll.getWindow());
 		glfwPollEvents();
 
@@ -60,6 +61,14 @@ int main(){
 			glm::vec3(0.0f, 1.0f, 0.0f)));
 
 	}
+	//Mesh testMesh = skeleton.meshes[0];
+	//for (size_t j = 0; j < 7; j++)
+	//{
+	//	for (size_t i = 0; i < 3; i++)
+	//	{
+	//		std::cout << testMesh.vertices[j].Position[i] << std::endl;
+	//	}
+	//}
 	libcontroll.endAll();
 	return 0;
 }
