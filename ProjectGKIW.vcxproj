@@ -158,6 +158,10 @@
     <ClCompile Include="basicallyIntegralPartOfAssimp.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="f_lambert.glsl" />
+    <None Include="v_lambert.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

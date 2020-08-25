@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "lodepng.h"
 #include <iostream>
-//#include "shaderprogram.h"
+#include "shaderprogram.h"
 class Controller
 {
 protected:

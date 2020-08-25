@@ -25,7 +25,7 @@ ShaderProgram *spConstant;
 
 void initShaders(){
     spLambert=new ShaderProgram("v_lambert.glsl",NULL,"f_lambert.glsl");
-    spConstant=new ShaderProgram("v_constant.glsl",NULL,"f_constant.glsl");
+    //spConstant=new ShaderProgram("v_constant.glsl",NULL,"f_constant.glsl");
 }
 
 void freeShaders(){

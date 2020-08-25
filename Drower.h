@@ -5,8 +5,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <assimp/cimport.h>
-//#include "shaderprogram.h"
+#include "shaderprogram.h"
 #include "ModelCtrl.h"
+
 class Drower
 {	
 protected:
@@ -17,7 +18,7 @@ public:
 	Drower(GLFWwindow*);
 	//czyœci ekran
 	void clear();
-	void setCamera(glm::mat4);
+	void setCamera(float=0, float=0, float=-5, float=0, float=0);
 	
 	
 };

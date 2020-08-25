@@ -146,28 +146,31 @@ void ModelCtrl::setupForLLD(float colR, float colG, float colB, float colAlpha) 
 }
 
 void ModelCtrl::drawLLD() {
+
+    glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(this->ModelPosition));
+
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
-    std::cout << "1"<< std::endl;
+    //std::cout << "1"<< std::endl;
 
-    glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, &this->verticesLLD[0]);
-
-    std::cout << "2" << std::endl;
+    //glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, &this->verticesLLD[0]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    //std::cout << "2" << std::endl;
 
     //if (!smooth) glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normals);
-    glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, &this->normalsLLD[0]);
+    //glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, &this->normalsLLD[0]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+    //std::cout << "3" << std::endl;
 
-    std::cout << "3" << std::endl;
-
-    glVertexAttribPointer(2, 4, GL_FLOAT, false, 0, &this->texCordsLLD[0]);
-
-    std::cout << "4" << std::endl;
+    //glVertexAttribPointer(2, 4, GL_FLOAT, false, 0, &this->texCordsLLD[0]);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+    //std::cout << "4" << std::endl;
 
     glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, &this->colorLLD[0]);
 
-    std::cout << "5" << std::endl;
+    //std::cout << "5" << std::endl;
 
     
     glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);

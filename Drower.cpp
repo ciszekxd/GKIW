@@ -8,6 +8,8 @@ Drower::Drower(GLFWwindow* window) {
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	this->Perspective = glm::perspective(50.0f * 3.14f / 180.0f, 1.0f, 1.0f, 50.0f);
+	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(this->Perspective));
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(this->cameraPosition));
 	
 }
 
@@ -16,8 +18,15 @@ void Drower::clear() {
 	glClearColor(0, 0, 1, 0);
 }
 
-void Drower::setCamera(glm::mat4 newMat) {
-	this->cameraPosition = newMat;
+void Drower::setCamera(float x, float y, float z, float rota, float y_side) {
+	this->cameraPosition = glm::lookAt(
+			glm::vec3(x, y, z),
+			glm::vec3(x+sin(rota), y_side, z+cos(rota)),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(this->cameraPosition));
 }
 
 

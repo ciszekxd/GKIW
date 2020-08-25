@@ -10,8 +10,8 @@ void Controller::initAll(){
 		exit(EXIT_FAILURE);
 	}
 	glEnable(GL_DEPTH_TEST);
-//	initShaders();
-//	spLambert->use();
+	initShaders();
+	spLambert->use();
 	std::cout << "hello world" << std::endl;
 }
 
