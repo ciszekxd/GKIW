@@ -84,7 +84,7 @@ int main(){
 	while (!glfwWindowShouldClose(libcontroll.getWindow())) {
 		drowIT.clear();
 		glUniform4f(spLambert->u("color"), 1, 0, 0, 0);
-		skeleton.drawLLD();
+		skeleton.Draw();
 		glfwSwapBuffers(libcontroll.getWindow());
 		glfwPollEvents();
 		drowIT.setCamera(key_X, key_Y, key_Z, key_Side, key_Y_Side);

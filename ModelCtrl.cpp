@@ -7,11 +7,11 @@ ModelCtrl::ModelCtrl(float x, float y, float z) {
 
 void ModelCtrl::loadModel(const std::string &path){
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path,
-        aiProcess_CalcTangentSpace |
+    const aiScene* scene = importer.ReadFile(path,
         aiProcess_Triangulate |
-        aiProcess_JoinIdenticalVertices |
-        aiProcess_SortByPType);
+        aiProcess_GenSmoothNormals |
+        aiProcess_FlipUVs |
+        aiProcess_CalcTangentSpace);
     processNode(scene->mRootNode, scene);
     setupForLLD(1.0f,0.0f,0.0f,1.0f);
 }
@@ -23,8 +23,8 @@ void ModelCtrl::processNode(aiNode* node, const aiScene* scene)
         // the node object only contains indices to index the actual objects in the scene. 
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
-        //this->meshes.push_back(processMesh(mesh, scene));
+        //meshes.push_back(processMesh(mesh, scene));
+        this->meshes.push_back(processMesh(mesh, scene));
     }
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -184,6 +184,7 @@ void ModelCtrl::drawLLD() {
 
 
 void ModelCtrl::Draw() {
+    glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(this->ModelPosition));
     for (int j=0; j < this->meshes.size(); j++) {
         this->meshes[j].Draw();
     }
