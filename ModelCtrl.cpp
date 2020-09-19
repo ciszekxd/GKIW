@@ -7,11 +7,12 @@ ModelCtrl::ModelCtrl(float x, float y, float z) {
 
 void ModelCtrl::loadModel(const std::string &path){
 	Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path,
+    this->path = path;
+    const aiScene* scene = importer.ReadFile(this->path,
         aiProcess_Triangulate |
-        aiProcess_GenSmoothNormals |
-        aiProcess_FlipUVs |
-        aiProcess_CalcTangentSpace);
+   //     aiProcess_GenSmoothNormals |
+        aiProcess_FlipUVs);
+        //aiProcess_CalcTangentSpace);
     processNode(scene->mRootNode, scene);
     setupForLLD(1.0f,0.0f,0.0f,1.0f);
 }
@@ -65,15 +66,15 @@ Mesh ModelCtrl::processMesh(aiMesh* mesh, const aiScene* scene)
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.TexCoords = vec;
             // tangent
-            vector.x = mesh->mTangents[i].x;
-            vector.y = mesh->mTangents[i].y;
-            vector.z = mesh->mTangents[i].z;
+            //vector.x = mesh->mTangents[i].x;
+            //vector.y = mesh->mTangents[i].y;
+            //vector.z = mesh->mTangents[i].z;
            // vertex.Tangent = vector;
             // bitangent
-            vector.x = mesh->mBitangents[i].x;
-            vector.y = mesh->mBitangents[i].y;
-            vector.z = mesh->mBitangents[i].z;
-           // vertex.Bitangent = vector;
+            //vector.x = mesh->mBitangents[i].x;
+         //   vector.y = mesh->mBitangents[i].y;
+         //   vector.z = mesh->mBitangents[i].z;
+           /// vertex.Bitangent = vector;
         }
         else
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
@@ -97,16 +98,16 @@ Mesh ModelCtrl::processMesh(aiMesh* mesh, const aiScene* scene)
     // specular: texture_specularN
     // normal: texture_normalN
 
-    // 1. diffuse maps
-    //vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    //// 1. diffuse maps
+    //std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
     //textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-    // 2. specular maps
-    //vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    //// 2. specular maps
+    //std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
     //textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    // 3. normal maps
+    //// 3. normal maps
     //std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
     //textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-    // 4. height maps
+    //// 4. height maps
     //std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     //textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
@@ -148,37 +149,43 @@ void ModelCtrl::setupForLLD(float colR, float colG, float colB, float colAlpha) 
 void ModelCtrl::drawLLD() {
 
     glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(this->ModelPosition));
+        
+    float* vertexLLD = &this->verticesLLD[0];
+    float* normalLLD = &this->normalsLLD[0];
+    float* texCordLLD = &this->texCordsLLD[0];
+    float* colorLLD = &this->colorLLD[0];
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    //std::cout << "1"<< std::endl;
 
-    //glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, &this->verticesLLD[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    //std::cout << "2" << std::endl;
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
+        //std::cout << "1"<< std::endl;
 
-    //if (!smooth) glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normals);
-    //glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, &this->normalsLLD[0]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    //std::cout << "3" << std::endl;
+        glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, vertexLLD);
+        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+        //std::cout << "2" << std::endl;
 
-    //glVertexAttribPointer(2, 4, GL_FLOAT, false, 0, &this->texCordsLLD[0]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-    //std::cout << "4" << std::endl;
+        //if (!smooth) glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normals);
+        glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normalLLD);
+        //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+        //std::cout << "3" << std::endl;
 
-    glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, &this->colorLLD[0]);
+        glVertexAttribPointer(2, 4, GL_FLOAT, false, 0, texCordLLD);
+        //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+        //std::cout << "4" << std::endl;
 
-    //std::cout << "5" << std::endl;
+        glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, colorLLD);
+
+        //std::cout << "5" << std::endl;
 
     
-    glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
+        glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
 
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(3);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(3);
 }
 
 
@@ -189,13 +196,73 @@ void ModelCtrl::Draw() {
         this->meshes[j].Draw();
     }
 }
-/*void ModelCtrl::conversion() {
-    int ite = 0;
-     int Verts = 4 * this->vertexCount;
-    float vert[Verts];
-    float norms[Verts];
-    for (int i; i < this->vertexCount; i++) {
-        this->
-    }
-}*/
-
+//std::vector<Texture> ModelCtrl::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName){
+//    std::vector<Texture> textures;
+//    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+//    {
+//        aiString str;
+//        mat->GetTexture(type, i, &str);
+//        // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
+//        bool skip = false;
+//        for (unsigned int j = 0; j < textures_loaded.size(); j++)
+//        {
+//            if (std::strcmp(this->textures_loaded[j].path.data(), str.C_Str()) == 0)
+//            {
+//                textures.push_back(textures_loaded[j]);
+//                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+//                break;
+//            }
+//        }
+//        if (!skip)
+//        {   // if texture hasn't been loaded already, load it
+//            Texture texture;
+//            texture.id = TextureFromFile(str.C_Str(),0);
+//            texture.type = typeName;
+//            texture.path = str.C_Str();
+//            textures.push_back(texture);
+//            textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
+//        }
+//    }
+//    return textures;
+//}
+//
+//unsigned int ModelCtrl::TextureFromFile(const char* path, bool gamma)
+//{
+//    std::string filename = std::string(path);
+//    //filename = directory + '/' + filename;
+//
+//    unsigned int textureID;
+//    glGenTextures(1, &textureID);
+//
+//    int width, height, nrComponents;
+//    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+//    if (data)
+//    {
+//        GLenum format;
+//        if (nrComponents == 1)
+//            format = GL_RED;
+//        else if (nrComponents == 3)
+//            format = GL_RGB;
+//        else if (nrComponents == 4)
+//            format = GL_RGBA;
+//
+//        glBindTexture(GL_TEXTURE_2D, textureID);
+//        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+//        glGenerateMipmap(GL_TEXTURE_2D);
+//
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//
+//        stbi_image_free(data);
+//    }
+//    else
+//    {
+//        std::cout << "Texture failed to load at path: " << path << std::endl;
+//        stbi_image_free(data);
+//    }
+//
+//    return textureID;
+//}
+//

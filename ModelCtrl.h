@@ -23,8 +23,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "shaderprogram.h"
-
-
+#include "stb_image.h" 
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -36,6 +35,7 @@ class ModelCtrl
 public:
 	glm::mat4 ModelPosition;
 	std::vector<Mesh> vertices;
+	std::vector<Texture> textures_loaded;
 	std::vector<Texture> normals;
 	std::vector<Mesh> meshes;
 	std::vector<float> verticesLLD; //lab like drow
@@ -43,9 +43,11 @@ public:
 	std::vector<float> colorLLD;
 	std::vector<float> texCordsLLD;
 	int vertexCount;
-	
+	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, const std::string&);
+	unsigned int TextureFromFile(const char*, bool);
+	std::string path;
 	ModelCtrl(float=0, float=0, float=0);
-	void loadModel(const std::string& path);
+	void loadModel(const std::string& );
 	void processNode(aiNode*,const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
 	void setupForLLD(float=1, float=0, float=0, float=1);

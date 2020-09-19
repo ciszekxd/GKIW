@@ -12,6 +12,7 @@
 #include "controller.h"
 #include "Drower.h"
 #include "ModelCtrl.h"
+#include "ModelGroup.h"
 #include <iostream>
 
 
@@ -21,6 +22,7 @@ float key_Z = -5.0f;
 float key_Side = 0.0f;
 float speed = 0.3;
 float key_Y_Side = 0.0f;
+bool nextKF = 0;
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod) {
@@ -44,8 +46,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			std::cout << key_X << std::endl;
 			std::cout << key_Z << std::endl;
 			std::cout << key_Y << std::endl;
-			key_X += sin(key_Side)/10;
-			key_Z += cos(key_Side)/10;
+			key_X += sin(key_Side);
+			key_Z += cos(key_Side);
 			std::cout << key_X << std::endl;
 			std::cout << key_Z << std::endl;
 			std::cout << key_Y << std::endl;
@@ -62,6 +64,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			key_Y -= speed;
 			key_Y_Side -= speed;
 		}
+		else if (key == GLFW_KEY_X) {
+			nextKF = 1;
+		}
 	}
 }
 
@@ -76,17 +81,24 @@ int main(){
 
 
 	Drower drowIT(libcontroll.getWindow());
-	const std::string szkielet = "skeleton.obj";
+	/*const std::string szkielet = "keyFrames\\kf20.obj";
 	ModelCtrl skeleton(0.0, 0.0, 0.0);
-	skeleton.loadModel(szkielet);
+	skeleton.loadModel(szkielet);*/
+	std::string dane1 = "keyFrames";
+	std::string dane2 = "kf";
+	ModelGroup SceletonA(9,dane1, dane2);
 	
 	//
 	while (!glfwWindowShouldClose(libcontroll.getWindow())) {
 		drowIT.clear();
 		glUniform4f(spLambert->u("color"), 1, 0, 0, 0);
-		skeleton.Draw();
+		SceletonA.Draw();
 		glfwSwapBuffers(libcontroll.getWindow());
 		glfwPollEvents();
+		if (nextKF) {
+			SceletonA.goToNextKF();
+			nextKF = 0;
+		}
 		drowIT.setCamera(key_X, key_Y, key_Z, key_Side, key_Y_Side);
 		
 	}
