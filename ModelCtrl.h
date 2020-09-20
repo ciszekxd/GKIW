@@ -53,6 +53,11 @@ public:
 	void setupForLLD(float=1, float=0, float=0, float=1);
 	void Draw();
 	void drawLLD();
+	float* getVerticesLLD();
+	float* getNormalsLLD();
+	int getVertexCount();
+	glm::mat4 getModelPosition();
+
 	
 	//void conversion();
 

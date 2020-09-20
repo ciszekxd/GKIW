@@ -1,20 +1,20 @@
-#include "ModelCtrl.h"
+ï»¿#include "ModelCtrl.h"
 
 ModelCtrl::ModelCtrl(float x, float y, float z) {
     this->ModelPosition = glm::mat4(1.0f);
     this->ModelPosition = glm::translate(this->ModelPosition, glm::vec3(x, y, z));
 }
 
-void ModelCtrl::loadModel(const std::string &path){
-	Assimp::Importer importer;
+void ModelCtrl::loadModel(const std::string& path) {
+    Assimp::Importer importer;
     this->path = path;
     const aiScene* scene = importer.ReadFile(this->path,
         aiProcess_Triangulate |
-   //     aiProcess_GenSmoothNormals |
+        //     aiProcess_GenSmoothNormals |
         aiProcess_FlipUVs);
-        //aiProcess_CalcTangentSpace);
+    //aiProcess_CalcTangentSpace);
     processNode(scene->mRootNode, scene);
-    setupForLLD(1.0f,0.0f,0.0f,1.0f);
+    setupForLLD(1.0f, 0.0f, 0.0f, 1.0f);
 }
 void ModelCtrl::processNode(aiNode* node, const aiScene* scene)
 {
@@ -118,15 +118,15 @@ Mesh ModelCtrl::processMesh(aiMesh* mesh, const aiScene* scene)
 
 void ModelCtrl::setupForLLD(float colR, float colG, float colB, float colAlpha) {
     //z wektora siatek iterujemy po kolejnych siatkach
-    for  (int i = 0;  i < this->meshes.size(); i++){
+    for (int i = 0; i < this->meshes.size(); i++) {
         Mesh temp = this->meshes[i];
-        //dla ka¿dej siatki iterujemy po wszystkich wierzcho³kach wchodz¹cych w jej sk³ad
-        for (int k = 0; k < temp.vertices.size(); k++){
-            //przepisujemy koordynaty z ka¿dego wierzcho³ka
+        //dla kaÂ¿dej siatki iterujemy po wszystkich wierzchoÂ³kach wchodzÂ¹cych w jej skÂ³ad
+        for (int k = 0; k < temp.vertices.size(); k++) {
+            //przepisujemy koordynaty z kaÂ¿dego wierzchoÂ³ka
             for (int j = 0; j < 3; j++)
             {
-               this->verticesLLD.push_back(temp.vertices[k].Position[j]);
-               this->normalsLLD.push_back(temp.vertices[k].Normal[j]);
+                this->verticesLLD.push_back(temp.vertices[k].Position[j]);
+                this->normalsLLD.push_back(temp.vertices[k].Normal[j]);
             }
             this->verticesLLD.push_back(1.0f);
             this->normalsLLD.push_back(0.0f);
@@ -149,50 +149,70 @@ void ModelCtrl::setupForLLD(float colR, float colG, float colB, float colAlpha) 
 void ModelCtrl::drawLLD() {
 
     glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(this->ModelPosition));
-        
+
     float* vertexLLD = &this->verticesLLD[0];
     float* normalLLD = &this->normalsLLD[0];
     float* texCordLLD = &this->texCordsLLD[0];
     float* colorLLD = &this->colorLLD[0];
 
 
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glEnableVertexAttribArray(3);
-        //std::cout << "1"<< std::endl;
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    //std::cout << "1"<< std::endl;
 
-        glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, vertexLLD);
-        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-        //std::cout << "2" << std::endl;
+    glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, vertexLLD);
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    //std::cout << "2" << std::endl;
 
-        //if (!smooth) glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normals);
-        glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normalLLD);
-        //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-        //std::cout << "3" << std::endl;
+    //if (!smooth) glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normals);
+    glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, normalLLD);
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+    //std::cout << "3" << std::endl;
 
-        glVertexAttribPointer(2, 4, GL_FLOAT, false, 0, texCordLLD);
-        //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-        //std::cout << "4" << std::endl;
+    glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, texCordLLD);
+    //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+    //std::cout << "4" << std::endl;
 
-        glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, colorLLD);
+    glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, colorLLD);
 
-        //std::cout << "5" << std::endl;
+    //std::cout << "5" << std::endl;
 
-    
-        glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
 
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
-        glDisableVertexAttribArray(3);
+    glDrawArrays(GL_TRIANGLES, 0, this->vertexCount);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(3);
+}
+
+float* ModelCtrl::getVerticesLLD()
+{
+    return &this->verticesLLD[0];
+}
+
+float* ModelCtrl::getNormalsLLD()
+{
+    return &this->normalsLLD[0];
+}
+
+int ModelCtrl::getVertexCount()
+{
+    return this->vertexCount;
+}
+
+glm::mat4 ModelCtrl::getModelPosition()
+{
+    return this->ModelPosition;
 }
 
 
 
 void ModelCtrl::Draw() {
     glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(this->ModelPosition));
-    for (int j=0; j < this->meshes.size(); j++) {
+    for (int j = 0; j < this->meshes.size(); j++) {
         this->meshes[j].Draw();
     }
 }
@@ -265,4 +285,4 @@ void ModelCtrl::Draw() {
 //
 //    return textureID;
 //}
-//
+////

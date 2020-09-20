@@ -16,8 +16,10 @@ void Controller::initAll(){
 }
 
 void Controller::endAll() {
+	freeShaders();
 	glfwDestroyWindow(this->window);
 	glfwTerminate();
+	std::cout << "gracefull exit" << std::endl;
 	exit(EXIT_SUCCESS);
 }
 GLFWwindow* Controller::getWindow() {

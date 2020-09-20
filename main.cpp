@@ -14,7 +14,7 @@
 #include "ModelCtrl.h"
 #include "ModelGroup.h"
 #include <iostream>
-
+#include <cmath>
 
 float key_X  = 0.0f;
 float key_Y = 0.0f;
@@ -23,6 +23,7 @@ float key_Side = 0.0f;
 float speed = 0.3;
 float key_Y_Side = 0.0f;
 bool nextKF = 0;
+bool secondPassed = 0;
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod) {
@@ -86,30 +87,37 @@ int main(){
 	skeleton.loadModel(szkielet);*/
 	std::string dane1 = "keyFrames";
 	std::string dane2 = "kf";
-	ModelGroup SceletonA(9,dane1, dane2);
-	
+	ModelGroup SceletonA(9,dane1, dane2, 5.0f, 5.0f, 5.0f);
+	ModelCtrl testb(2.0f, 2.0f, 2.0f);
+	std::string szkielet = "betterSkeletonTextured.obj";
+	testb.loadModel(szkielet);
 	//
+
+	float Time=0;
+	glfwSetTime(0);
+
 	while (!glfwWindowShouldClose(libcontroll.getWindow())) {
 		drowIT.clear();
+
 		glUniform4f(spLambert->u("color"), 1, 0, 0, 0);
-		SceletonA.Draw();
+		Time = fmod(glfwGetTime(), 1.0);
+		if (Time < 0.1) secondPassed = 0;
+
+		SceletonA.interpolation(Time+0.001);
+
+
+
 		glfwSwapBuffers(libcontroll.getWindow());
 		glfwPollEvents();
-		if (nextKF) {
+		if ((!secondPassed && (Time > 0.9)))
+		{
 			SceletonA.goToNextKF();
-			nextKF = 0;
+			
+			secondPassed = 1;
+			std::cout << "next frame" << std::endl;
 		}
 		drowIT.setCamera(key_X, key_Y, key_Z, key_Side, key_Y_Side);
 		
 	}
-	//Mesh testMesh = skeleton.meshes[0];
-	//for (size_t j = 0; j < 7; j++)
-	//{
-	//	for (size_t i = 0; i < 3; i++)
-	//	{
-	//		std::cout << testMesh.vertices[j].Position[i] << std::endl;
-	//	}
-	//}
 	libcontroll.endAll();
-	return 0;
 }
